@@ -7,8 +7,6 @@
 // backflow, and as such the water in the tubing flows back into the reservoir between pumping
 #define tubeLenghtCM 600
 #define tubeInnerRadiusCM 0.3
-#define xMl 142
-#define yPlants 7
 // Pump should do about 83 ml per second (rated at 300 l/h)
 #define testedRating 1.8
 #define mlCalibration ((((float) 1)/(300*1000/60/60))/testedRating)
@@ -62,9 +60,13 @@ float waterXmlForYplants(float ml, int plants) {
     return ((float) clock() - start) / CLOCKS_PER_SEC;
 }
 
-int main() {    
+// REQUIRES passing two args:
+// 1. ml to water each plant
+// 2. nr of plants to water
+int main(int argc, char **argv) {    
+    if argc != 3 return 0;  // if not enough args passed, return
     if (!setup(outs, len1, ins, len2)) return 0;
-    waterXmlForYplants(xMl, yPlants);
+    waterXmlForYplants(argv[1], argv[2]);
 
     // From here: http://www.cplusplus.com/reference/ctime/localtime/
     time_t rawtime;
@@ -73,7 +75,7 @@ int main() {
     timeinfo = localtime (&rawtime);
     FILE *f;
     f = fopen("water.log", "a+");
-    fprintf(f, "%d ml for %d plants at: %s", xMl, yPlants, asctime(timeinfo));
+    fprintf(f, "%d ml for %d plants at: %s", argv[1], argv[2], asctime(timeinfo));
 
     printf("main() finished, returning...\n");
     gpioWrite(OUT1, 0);
