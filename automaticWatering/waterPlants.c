@@ -1,5 +1,6 @@
 #include <pigpio.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -64,9 +65,11 @@ float waterXmlForYplants(float ml, int plants) {
 // 1. ml to water each plant
 // 2. nr of plants to water
 int main(int argc, char **argv) {    
-    if argc != 3 return 0;  // if not enough args passed, return
+    if (argc != 3) return 0;  // if not enough args passed, return
     if (!setup(outs, len1, ins, len2)) return 0;
-    waterXmlForYplants(argv[1], argv[2]);
+    float ml = float(atof(argv[1]));
+    int plants = atoi(argv[2]);
+    waterXmlForYplants(ml, plants);	// crashes if args can't be converted to floats!
 
     // From here: http://www.cplusplus.com/reference/ctime/localtime/
     time_t rawtime;
