@@ -64,7 +64,7 @@ float waterXmlForYplants(float ml, int plants) {
 // REQUIRES passing two args:
 // 1. ml to water each plant
 // 2. nr of plants to water
-int main(int argc, char **argv) {    
+int main(int argc, char **argv) {
     if (argc != 3) return 0;  // if not enough args passed, return
     if (!setup(outs, len1, ins, len2)) return 0;
     float ml = float(atof(argv[1]));
@@ -76,9 +76,10 @@ int main(int argc, char **argv) {
     struct tm * timeinfo;
     time (&rawtime);
     timeinfo = localtime (&rawtime);
+    int decimalsPrinted = 1;
     FILE *f;
     f = fopen("water.log", "a+");
-    fprintf(f, "%d ml for %d plants at: %s", argv[1], argv[2], asctime(timeinfo));
+    fprintf(f, "%.*f ml for %d plants at: %s", decimalsPrinted, ml, plants, asctime(timeinfo)); //argv[1], argv[2], asctime(timeinfo));
 
     printf("main() finished, returning...\n");
     gpioWrite(OUT1, 0);
