@@ -33,6 +33,7 @@ std::string extractTime(std::string raw) {
   return lastLines.substr(0, lastLines.find('\n'));
 }
 
+// Formats string str with date and time info (appends \n at end)
 std::string loggify(std::string str) {
   // From here: http://www.cplusplus.com/reference/ctime/localtime/
   time_t rawtime;

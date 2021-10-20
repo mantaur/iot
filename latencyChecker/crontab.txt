@@ -1,0 +1,2 @@
+For latency checking i add an entry to my crontab which runs every minute like so:
+* * * * * cd /home/pi/Documents/iot/iot/latencyChecker/ && sudo ./latencyChecker.exe
