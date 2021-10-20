@@ -4,7 +4,7 @@ Holds code for running ping commands and formating the output for logging for th
 ## Compiling:
 Compile the file [latencyChecker.cpp](https://github.com/mantaur/iot/blob/main/latencyChecker/latencyChecker.cpp) with:
 ```bash
-cpp latencyChecker.cpp -o latencyChecker.exe
+c++ latencyChecker.cpp -o latencyChecker.exe
 ```
 (or any other cpp compiler of your choice)
 
