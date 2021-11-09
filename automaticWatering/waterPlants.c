@@ -70,7 +70,9 @@ int main(int argc, char **argv) {
     float ml = float(atof(argv[1]));
     int plants = atoi(argv[2]);
     float secondsElapsed = waterXmlForYplants(ml, plants);	// crashes if args can't be converted to floats!
-    float actual_ml = secondsElapsed * mlCalibration;
+    float actual_ml = secondsElapsed / mlCalibration;
+
+    printf("\nsecondsElapsed: %.*f, actual_ml: %.*f, mlCalibration: %.*f\n", 1, secondsElapsed, 5, actual_ml, 5, mlCalibration);
 
     // From here: http://www.cplusplus.com/reference/ctime/localtime/
     time_t rawtime;
