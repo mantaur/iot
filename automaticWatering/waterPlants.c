@@ -4,10 +4,10 @@
 #include <time.h>
 #include <unistd.h>
 
-// Below are calibration values. waterXmlForYplants() assumes that your pump doesn't prevent 
-// backflow, and as such the water in the tubing flows back into the reservoir between pumping
+// Below are calibration values.
 #define tubeLenghtCM 600
 #define tubeInnerRadiusCM 0.3
+#define tubeVolume (3.14 * tubeInnerRadiusCM*tubeInnerRadiusCM * tubeLenghtCM)
 // Pump should do about 83 ml per second (rated at 300 l/h)
 #define testedRating 1.8
 #define mlCalibration ((((float) 1)/(300*1000/60/60))/testedRating)
@@ -53,10 +53,10 @@ void stop(int *pins, int len) {
 float waterXmlForYplants(float ml, int plants) {
     clock_t start = clock();
     clock_t end = start 
-                + (ml*mlCalibration * plants * CLOCKS_PER_SEC)
-                + (3.14 * tubeInnerRadiusCM*tubeInnerRadiusCM * tubeLenghtCM * mlCalibration * CLOCKS_PER_SEC);
+                + (ml*mlCalibration * plants * CLOCKS_PER_SEC);
+                // + (tubeVolume * mlCalibration * CLOCKS_PER_SEC);     // If the tube empties after pumping, this is the time needed to refill it
     pump(outs, len1);           // start pump
-    while (clock() < end) sleep(0.3); //for (int i = 0; i < 1000; i++);
+    while (clock() < end) sleep(0.3); // wait for pump to finish
     stop(outs, len1);           // stop it when ml has been pumped to "plants" number of plants
     return ((float) clock() - start) / CLOCKS_PER_SEC;
 }
@@ -69,7 +69,8 @@ int main(int argc, char **argv) {
     if (!setup(outs, len1, ins, len2)) return 0;
     float ml = float(atof(argv[1]));
     int plants = atoi(argv[2]);
-    waterXmlForYplants(ml, plants);	// crashes if args can't be converted to floats!
+    float secondsElapsed = waterXmlForYplants(ml, plants);	// crashes if args can't be converted to floats!
+    float actual_ml = secondsElapsed * mlCalibration;
 
     // From here: http://www.cplusplus.com/reference/ctime/localtime/
     time_t rawtime;
@@ -79,7 +80,7 @@ int main(int argc, char **argv) {
     int decimalsPrinted = 1;
     FILE *f;
     f = fopen("water.log", "a+");
-    fprintf(f, "%.*f ml for %d plants at: %s", decimalsPrinted, ml, plants, asctime(timeinfo)); //argv[1], argv[2], asctime(timeinfo));
+    fprintf(f, "%.*f ml for %d plants (total: %.*f) at: %s", decimalsPrinted, ml, plants, decimalsPrinted, actual_ml, asctime(timeinfo));
 
     printf("main() finished, returning...\n");
     gpioWrite(OUT1, 0);
